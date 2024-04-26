@@ -14,6 +14,7 @@ const scene = new THREE.Scene();
 const gltfLoader = new GLTFLoader();
 
 let mannetje, mannetje2;
+let gsapAnimation;
 
 gltfLoader.load("models/mannetje/mannetje.gltf", (gltf) => {
   mannetje = gltf;
@@ -24,7 +25,8 @@ gltfLoader.load("models/mannetje/mannetje.gltf", (gltf) => {
   scene.add(gltf.scene);
 
   // Animation gsap
-  gsap.to(gltf.scene.position, {
+
+  gsapAnimation = gsap.to(gltf.scene.position, {
     y: 1.75,
     duration: 2,
     yoyo: true,
@@ -40,6 +42,7 @@ gltfLoader.load("models/blauw/blauw.gltf", (gltf) => {
   //scale
   gltf.scene.scale.set(1.1, 1.1, 1.1);
   scene.add(gltf.scene);
+
   //gsap animation
   const childObject = gltf.scene.children[6];
   gsap.from(childObject.position, {
@@ -63,7 +66,6 @@ gltfLoader.load("models/blauw/blauw.gltf", (gltf) => {
       ease: "sine.inOut",
     }
   );
-
 });
 
 /**
@@ -121,6 +123,26 @@ scene.add(directionalLightHelper4);
 //hide
 directionalLightHelper4.visible = false;
 
+
+//shadows
+// Enable shadow casting for the directional light
+directionalLight.castShadow = true;
+
+// Set the shadow map size to increase resolution
+directionalLight.shadow.mapSize.set(2048, 2048); // Increase the map size for higher resolution
+
+// Set the camera frustum for the shadow camera
+directionalLight.shadow.camera.left = -10; // Adjust left boundary of the frustum
+directionalLight.shadow.camera.right = 10; // Adjust right boundary of the frustum
+directionalLight.shadow.camera.top = 10; // Adjust top boundary of the frustum
+directionalLight.shadow.camera.bottom = -10; // Adjust bottom boundary of the frustum
+directionalLight.shadow.camera.near = 0.5; // Adjust near plane of the frustum
+directionalLight.shadow.camera.far = 30; // Adjust far plane of the frustum
+
+// Set shadow radius for softening the edges (optional)
+directionalLight.shadow.radius = 2; // Increase the shadow blur radius for smoother shadows
+
+
 /*  GUI */
 const gui = new GUI({
   width: 400,
@@ -156,9 +178,37 @@ modelPosition.add(debugParams, "xPosition", -10, 10).onChange((value) => {
   mannetje2.scene.position.x = value;
 });
 
-modelPosition.add(debugParams, "yPosition", -10, 10).onChange((value) => {
-  mannetje2.scene.position.y = value;
+//y position controller
+const yPositionController = modelPosition.add(
+  debugParams,
+  "yPosition",
+  -10,
+  10
+);
+yPositionController.onChange((value) => {
+  gsapAnimation.pause();
   mannetje.scene.position.y = value;
+  mannetje2.scene.position.y = value;
+});
+
+yPositionController.onFinishChange(() => {
+  if (mannetje.scene.position.y < 3) {
+    gsapAnimation = gsap.to(mannetje.scene.position, {
+      y: Math.PI / 2,
+      duration: 2,
+      yoyo: true,
+      repeat: -1,
+      ease: "sine.inOut",
+    });
+  } else {
+    gsapAnimation = gsap.to(mannetje.scene.position, {
+      y: 0.01,
+      yoyo: true,
+      duration: 2,
+      repeat: -1,
+      ease: "sine.inOut",
+    });
+  }
 });
 
 modelPosition.add(debugParams, "zPosition", -10, 10).onChange((value) => {
@@ -177,6 +227,7 @@ lightPosition.add(debugParams, "lightZPosition", -20, 20).onChange((value) => {
   directionalLight.position.z = value;
 });
 
+
 //show light helpers
 const lightHelpers = gui.addFolder("Light helpers");
 lightHelpers.add(debugParams, "directionalLightHelper").onChange((value) => {
@@ -185,7 +236,6 @@ lightHelpers.add(debugParams, "directionalLightHelper").onChange((value) => {
   directionalLightHelper3.visible = value;
   directionalLightHelper4.visible = value;
 });
-
 
 //stop animation make folder animations
 const animations = gui.addFolder("Animations");
@@ -206,29 +256,31 @@ animations
   .add({ stop: () => gsap.globalTimeline.clear() }, "stop")
   .name("Remove animations");
 
-  //add animation speed to gui for every model
-  animations.add(
-    { speed: 1 },
-    "speed",
-    0.1,
-    2,
-    0.01
-  ).onChange((value) => {
+//add animation speed to gui for every model
+animations
+  .add({ speed: 1 }, "speed", 0.1, 2, 0.01)
+  .onChange((value) => {
     gsap.globalTimeline.timeScale(value);
-  }).name("Animation speed");
+  })
+  .name("Animation speed");
 
-
-//hide models folder, ability to hide one model 
+//hide models folder, ability to hide one model
 const hideModels = gui.addFolder("Hide models");
 //hide mannetje model and name it hide merge
-hideModels.add(debugParams, "hideModels").onChange((value) => {
-  mannetje2.scene.visible = !value;
-}).name("Hide marge");
+hideModels
+  .add(debugParams, "hideModels")
+  .onChange((value) => {
+    mannetje2.scene.visible = !value;
+  })
+  .name("Hide marge");
 
 //hide mannetje2 model
-hideModels.add(debugParams, "hideModels").onChange((value) => {
-  mannetje2.scene.visible = !value;
-}).name("Hide child");
+hideModels
+  .add(debugParams, "hideModels")
+  .onChange((value) => {
+    mannetje2.scene.visible = !value;
+  })
+  .name("Hide child");
 // Sizes
 const sizes = {
   width: 800,
@@ -259,6 +311,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 4));
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 //enable zoom only z-as
+controls.enableZoom = false;
 
 // Animation loop
 const tick = () => {
