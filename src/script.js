@@ -123,7 +123,6 @@ scene.add(directionalLightHelper4);
 //hide
 directionalLightHelper4.visible = false;
 
-
 //shadows
 // Enable shadow casting for the directional light
 directionalLight.castShadow = true;
@@ -141,7 +140,6 @@ directionalLight.shadow.camera.far = 30; // Adjust far plane of the frustum
 
 // Set shadow radius for softening the edges (optional)
 directionalLight.shadow.radius = 2; // Increase the shadow blur radius for smoother shadows
-
 
 /*  GUI */
 const gui = new GUI({
@@ -192,7 +190,6 @@ yPositionController.onChange((value) => {
 });
 
 yPositionController.onFinishChange(() => {
-  
   if (mannetje.scene.position.y < 2) {
     gsapAnimation = gsap.to(mannetje.scene.position, {
       y: Math.PI / 8,
@@ -201,7 +198,7 @@ yPositionController.onFinishChange(() => {
       repeat: -1,
       ease: "sine.inOut",
     });
-  }  else if (mannetje.scene.position.y > 2 && mannetje.scene.position.y < 5)  {
+  } else if (mannetje.scene.position.y > 2 && mannetje.scene.position.y < 5) {
     gsapAnimation = gsap.to(mannetje.scene.position, {
       y: 3,
       yoyo: true,
@@ -235,7 +232,6 @@ lightPosition.add(debugParams, "lightXPosition", -20, 20).onChange((value) => {
 lightPosition.add(debugParams, "lightZPosition", -20, 20).onChange((value) => {
   directionalLight.position.z = value;
 });
-
 
 //show light helpers
 const lightHelpers = gui.addFolder("Light helpers");
@@ -287,7 +283,7 @@ hideModels
 hideModels
   .add(debugParams, "hideModels")
   .onChange((value) => {
-    mannetje2.scene.visible = !value;
+    mannetje.scene.visible = !value;
   })
   .name("Hide child");
 // Sizes
