@@ -141,8 +141,8 @@ const debugParams = {
 //model position and folder
 const modelPosition = gui.addFolder("Model position");
 modelPosition.add(debugParams, "yPosition", -10, 10).onChange((value) => {
-  mannetje.scene.position.y = value;
-  mannetje2.scene.position.y = value;
+  mannetje.scene.position.x = value;
+  mannetje2.scene.position.x = value;
 });
 modelPosition.add(debugParams, "xPosition", -10, 10).onChange((value) => {
   mannetje.scene.position.x = value;
@@ -173,9 +173,11 @@ lightHelpers.add(debugParams, "directionalLightHelper").onChange((value) => {
   directionalLightHelper4.visible = value;
 });
 
+gui.show(false);
+
 document.addEventListener("keydown", (event) => {
-  if (event.key === "p" || event.key === "P") {
-    gui.visible ? gui.hide() : gui.show();
+  if (event.key === "p") {
+    gui.show(gui._hidden);
   }
 });
 
