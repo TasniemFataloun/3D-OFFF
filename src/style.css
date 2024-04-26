@@ -91,11 +91,84 @@ main {
 .content {
   padding: 7rem 2rem;
   background-color: #5a5652;
-  width: 100%;
+  max-width: 100vw;
 }
 
 .webgl {
   width: 40%;
   background-color: #5a5652;
   height: 100%;
+}
+
+
+/* responsive */
+
+@media screen and (max-width: 768px) {
+  header {
+    display: flex;
+  }
+  nav {
+    flex-direction: column;
+    align-items: flex-start; 
+
+  }
+  .leftNav {
+    margin-bottom: 2rem;
+  }
+
+  .leftNav ul {
+    flex-direction: column;
+    align-items: center;
+    width: 100vw; 
+  }
+
+  .leftNav ul li {
+    margin-bottom: 0.5rem;
+  }
+
+
+  .leftNav img {
+    width: 10rem;
+    height: 5rem;
+  }
+
+  .righNav ul{
+    flex-direction: column;
+    width: 100vw;
+  }
+
+  .righNav ul li {
+    margin-bottom: 0.5rem;
+  }
+
+  .righNav button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+
+  .righNav p {
+    font-size: 0.8rem;
+  }
+
+  .righNav button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+
+  .righNav p {
+    font-size: 0.8rem;
+  }
+
+  main {
+    flex-direction: column;
+  }
+
+  .content {
+    width: 100vw;
+    padding: 0 0 0 5px; 
+  }
+
+  .webgl {
+    max-width: 100vw;
+  }
 }
