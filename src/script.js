@@ -141,8 +141,8 @@ const debugParams = {
 //model position and folder
 const modelPosition = gui.addFolder("Model position");
 modelPosition.add(debugParams, "yPosition", -10, 10).onChange((value) => {
-  mannetje.scene.position.x = value;
-  mannetje2.scene.position.x = value;
+  mannetje.scene.position.y = value;
+  mannetje2.scene.position.y = value;
 });
 modelPosition.add(debugParams, "xPosition", -10, 10).onChange((value) => {
   mannetje.scene.position.x = value;
