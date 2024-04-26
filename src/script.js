@@ -192,17 +192,26 @@ yPositionController.onChange((value) => {
 });
 
 yPositionController.onFinishChange(() => {
-  if (mannetje.scene.position.y < 3) {
+  
+  if (mannetje.scene.position.y < 2) {
     gsapAnimation = gsap.to(mannetje.scene.position, {
-      y: Math.PI / 2,
+      y: Math.PI / 8,
       duration: 2,
       yoyo: true,
       repeat: -1,
       ease: "sine.inOut",
     });
+  }  else if (mannetje.scene.position.y > 2 && mannetje.scene.position.y < 5)  {
+    gsapAnimation = gsap.to(mannetje.scene.position, {
+      y: 3,
+      yoyo: true,
+      duration: 2,
+      repeat: -1,
+      ease: "sine.inOut",
+    });
   } else {
     gsapAnimation = gsap.to(mannetje.scene.position, {
-      y: 0.01,
+      y: 2,
       yoyo: true,
       duration: 2,
       repeat: -1,
