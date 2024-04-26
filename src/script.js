@@ -4,20 +4,20 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import GUI from "lil-gui";
 import gsap from "gsap";
 
-// Canvas
+/* Canvas */
 const canvas = document.querySelector("canvas.webgl");
 
-// Scene
+/* Scene */
 const scene = new THREE.Scene();
 
 /* Models */
 const gltfLoader = new GLTFLoader();
 
-let mannetje, mannetje2;
+let marge, modelChild;
 let gsapAnimation;
 
 gltfLoader.load("models/mannetje/mannetje.gltf", (gltf) => {
-  mannetje = gltf;
+  marge = gltf;
   gltf.scene.position.set(2, 2, 2.5);
   gltf.scene.rotation.set(0, -0.3, 0);
   //scale
@@ -36,10 +36,9 @@ gltfLoader.load("models/mannetje/mannetje.gltf", (gltf) => {
 });
 
 gltfLoader.load("models/blauw/blauw.gltf", (gltf) => {
-  mannetje2 = gltf;
+  modelChild = gltf;
   gltf.scene.position.set(2, 2, 2.5);
   gltf.scene.rotation.set(0, 0.1, 0);
-  //scale
   gltf.scene.scale.set(1.1, 1.1, 1.1);
   scene.add(gltf.scene);
 
@@ -68,78 +67,74 @@ gltfLoader.load("models/blauw/blauw.gltf", (gltf) => {
   );
 });
 
-/**
- * Lights
- */
+/* Lights*/
 const ambientLight = new THREE.AmbientLight(0xffffff, 2);
 scene.add(ambientLight);
-//directional light
+
+//light 1
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.position.set(-9, 4, -4);
 scene.add(directionalLight);
-//light helper
+
 const directionalLightHelper = new THREE.DirectionalLightHelper(
   directionalLight,
   0.2
 );
 scene.add(directionalLightHelper);
-//hide
+
 directionalLightHelper.visible = false;
 
-//directional light2 white
+//light 2
 const directionalLight2 = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight2.position.set(3, 4, 1);
 scene.add(directionalLight2);
-//light helper
+
 const directionalLightHelper2 = new THREE.DirectionalLightHelper(
   directionalLight2,
   0.2
 );
 scene.add(directionalLightHelper2);
-//hide
+
 directionalLightHelper2.visible = false;
-//directional light3
+
+
+//light 3 
 const directionalLight3 = new THREE.DirectionalLight(0xff9000, 2);
 directionalLight3.position.set(1, 4, 3);
 scene.add(directionalLight3);
-//light helper
+
 const directionalLightHelper3 = new THREE.DirectionalLightHelper(
   directionalLight3,
   0.2
 );
 scene.add(directionalLightHelper3);
-//hide
+
 directionalLightHelper3.visible = false;
-//directional light4 --> onder kleur 0xff9000
+
+
+//light 4
 const directionalLight4 = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight4.position.set(1, -4, -3);
 scene.add(directionalLight4);
-//light helper
+
 const directionalLightHelper4 = new THREE.DirectionalLightHelper(
   directionalLight4,
   0.2
 );
 scene.add(directionalLightHelper4);
-//hide
+
 directionalLightHelper4.visible = false;
 
 //shadows
-// Enable shadow casting for the directional light
 directionalLight.castShadow = true;
+directionalLight.shadow.mapSize.set(2048, 2048);
+directionalLight.shadow.camera.left = -10;
+directionalLight.shadow.camera.right = 10;
+directionalLight.shadow.camera.top = 10;
+directionalLight.shadow.camera.bottom = -10;
+directionalLight.shadow.camera.near = 0.5;
+directionalLight.shadow.camera.far = 30;directionalLight.shadow.radius = 2;
 
-// Set the shadow map size to increase resolution
-directionalLight.shadow.mapSize.set(2048, 2048); // Increase the map size for higher resolution
-
-// Set the camera frustum for the shadow camera
-directionalLight.shadow.camera.left = -10; // Adjust left boundary of the frustum
-directionalLight.shadow.camera.right = 10; // Adjust right boundary of the frustum
-directionalLight.shadow.camera.top = 10; // Adjust top boundary of the frustum
-directionalLight.shadow.camera.bottom = -10; // Adjust bottom boundary of the frustum
-directionalLight.shadow.camera.near = 0.5; // Adjust near plane of the frustum
-directionalLight.shadow.camera.far = 30; // Adjust far plane of the frustum
-
-// Set shadow radius for softening the edges (optional)
-directionalLight.shadow.radius = 2; // Increase the shadow blur radius for smoother shadows
 
 /*  GUI */
 const gui = new GUI({
@@ -169,11 +164,11 @@ const debugParams = {
   hideModels: false,
 };
 
-//model position and folder
+//model position 
 const modelPosition = gui.addFolder("Model position");
 modelPosition.add(debugParams, "xPosition", -10, 10).onChange((value) => {
-  mannetje.scene.position.x = value;
-  mannetje2.scene.position.x = value;
+  marge.scene.position.x = value;
+  modelChild.scene.position.x = value;
 });
 
 //y position controller
@@ -185,21 +180,21 @@ const yPositionController = modelPosition.add(
 );
 yPositionController.onChange((value) => {
   gsapAnimation.pause();
-  mannetje.scene.position.y = value;
-  mannetje2.scene.position.y = value;
+  marge.scene.position.y = value;
+  modelChild.scene.position.y = value;
 });
 
 yPositionController.onFinishChange(() => {
-  if (mannetje.scene.position.y < 2) {
-    gsapAnimation = gsap.to(mannetje.scene.position, {
+  if (marge.scene.position.y < 2) {
+    gsapAnimation = gsap.to(marge.scene.position, {
       y: Math.PI / 8,
       duration: 2,
       yoyo: true,
       repeat: -1,
       ease: "sine.inOut",
     });
-  } else if (mannetje.scene.position.y > 2 && mannetje.scene.position.y < 5) {
-    gsapAnimation = gsap.to(mannetje.scene.position, {
+  } else if (marge.scene.position.y > 2 && marge.scene.position.y < 5) {
+    gsapAnimation = gsap.to(marge.scene.position, {
       y: 3,
       yoyo: true,
       duration: 2,
@@ -207,7 +202,7 @@ yPositionController.onFinishChange(() => {
       ease: "sine.inOut",
     });
   } else {
-    gsapAnimation = gsap.to(mannetje.scene.position, {
+    gsapAnimation = gsap.to(marge.scene.position, {
       y: 2,
       yoyo: true,
       duration: 2,
@@ -218,33 +213,32 @@ yPositionController.onFinishChange(() => {
 });
 
 modelPosition.add(debugParams, "zPosition", -10, 10).onChange((value) => {
-  mannetje.scene.position.z = value;
-  mannetje2.scene.position.z = value;
+  marge.scene.position.z = value;
+  modelChild.scene.position.z = value;
 });
-//light positions and folder
-const lightPosition = gui.addFolder("Light position");
-lightPosition.add(debugParams, "lightYPosition", -20, 20).onChange((value) => {
-  directionalLight.position.y = value;
-});
+
+//light positions
+const lightPosition = gui.addFolder("Light");
 lightPosition.add(debugParams, "lightXPosition", -20, 20).onChange((value) => {
   directionalLight.position.x = value;
+});
+lightPosition.add(debugParams, "lightYPosition", -20, 20).onChange((value) => {
+  directionalLight.position.y = value;
 });
 lightPosition.add(debugParams, "lightZPosition", -20, 20).onChange((value) => {
   directionalLight.position.z = value;
 });
 
-//show light helpers
-const lightHelpers = gui.addFolder("Light helpers");
-lightHelpers.add(debugParams, "directionalLightHelper").onChange((value) => {
+//light helpers
+lightPosition.add(debugParams, "directionalLightHelper").onChange((value) => {
   directionalLightHelper.visible = value;
   directionalLightHelper2.visible = value;
   directionalLightHelper3.visible = value;
   directionalLightHelper4.visible = value;
 });
 
-//stop animation make folder animations
+//animations controller
 const animations = gui.addFolder("Animations");
-
 animations
   .add({ pause: () => gsap.globalTimeline.pause() }, "pause")
   .name("Pause animations");
@@ -269,30 +263,32 @@ animations
   })
   .name("Animation speed");
 
-//hide models folder, ability to hide one model
+//hide models 
 const hideModels = gui.addFolder("Hide models");
-//hide mannetje model and name it hide merge
+
 hideModels
   .add(debugParams, "hideModels")
   .onChange((value) => {
-    mannetje2.scene.visible = !value;
+    modelChild.scene.visible = !value;
   })
   .name("Hide marge");
 
-//hide mannetje2 model
+
 hideModels
   .add(debugParams, "hideModels")
   .onChange((value) => {
-    mannetje.scene.visible = !value;
+    marge.scene.visible = !value;
   })
   .name("Hide child");
-// Sizes
+
+
+/*Sizes*/ 
 const sizes = {
   width: 800,
   height: 800,
 };
 
-// Camera
+/* Camera */ 
 const camera = new THREE.PerspectiveCamera(
   20,
   sizes.width / sizes.height,
@@ -302,12 +298,13 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.set(20, 4, 0);
 scene.add(camera);
 
-// Renderer
+/* Renderer */
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
   alpha: true, //transparency
   antialias: true, //smoothness
 });
+
 //size and pixel ratio
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 4));
@@ -315,7 +312,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 4));
 // Controls
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
-//enable zoom only z-as
+//enable zoom
 controls.enableZoom = false;
 
 // Animation loop
