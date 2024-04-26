@@ -18,10 +18,11 @@ let mannetje, mannetje2;
 gltfLoader.load("models/mannetje/mannetje.gltf", (gltf) => {
   mannetje = gltf;
   gltf.scene.position.set(2, 2, 2.5);
-  gltf.scene.rotation.set(0, -0.1, 0);
+  gltf.scene.rotation.set(0, -0.3, 0);
+  //scale
+  gltf.scene.scale.set(0.9, 0.9, 0.9);
   scene.add(gltf.scene);
 
-  
   // Animation gsap
   gsap.to(gltf.scene.position, {
     y: 1.75,
@@ -34,6 +35,11 @@ gltfLoader.load("models/mannetje/mannetje.gltf", (gltf) => {
 
 gltfLoader.load("models/blauw/blauw.gltf", (gltf) => {
   mannetje2 = gltf;
+  gltf.scene.position.set(2, 2, 2.5);
+  gltf.scene.rotation.set(0, 0.1, 0);
+  //scale
+  gltf.scene.scale.set(1.1, 1.1, 1.1);
+  scene.add(gltf.scene);
   //gsap animation
   const childObject = gltf.scene.children[6];
   gsap.from(childObject.position, {
@@ -58,9 +64,6 @@ gltfLoader.load("models/blauw/blauw.gltf", (gltf) => {
     }
   );
 
-  gltf.scene.position.set(2, 2, 2.5);
-  gltf.scene.rotation.set(0, 0.1, 0);
-  scene.add(gltf.scene);
 });
 
 /**
@@ -126,6 +129,14 @@ const gui = new GUI({
 });
 gui.hide();
 
+gui.show(false);
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "p") {
+    gui.show(gui._hidden);
+  }
+});
+
 // GUI parameters
 const debugParams = {
   yPosition: 0,
@@ -140,14 +151,16 @@ const debugParams = {
 
 //model position and folder
 const modelPosition = gui.addFolder("Model position");
-modelPosition.add(debugParams, "yPosition", -10, 10).onChange((value) => {
-  mannetje.scene.position.y = value;
-  mannetje2.scene.position.y = value;
-});
 modelPosition.add(debugParams, "xPosition", -10, 10).onChange((value) => {
   mannetje.scene.position.x = value;
   mannetje2.scene.position.x = value;
 });
+
+modelPosition.add(debugParams, "yPosition", -10, 10).onChange((value) => {
+  mannetje2.scene.position.y = value;
+  mannetje.scene.position.y = value;
+});
+
 modelPosition.add(debugParams, "zPosition", -10, 10).onChange((value) => {
   mannetje.scene.position.z = value;
   mannetje2.scene.position.z = value;
@@ -173,25 +186,9 @@ lightHelpers.add(debugParams, "directionalLightHelper").onChange((value) => {
   directionalLightHelper4.visible = value;
 });
 
-gui.show(false);
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "p") {
-    gui.show(gui._hidden);
-  }
-});
-
-//hide models
-gui.add(debugParams, "hideModels").onChange((value) => {
-  mannetje.scene.visible = !value;
-  mannetje2.scene.visible = !value;
-});
 
 //stop animation make folder animations
 const animations = gui.addFolder("Animations");
-animations
-  .add({ stop: () => gsap.globalTimeline.clear() }, "stop")
-  .name("Stop animations");
 
 animations
   .add({ pause: () => gsap.globalTimeline.pause() }, "pause")
@@ -205,6 +202,33 @@ animations
   .add({ restart: () => gsap.globalTimeline.restart() }, "restart")
   .name("Restart animations");
 
+animations
+  .add({ stop: () => gsap.globalTimeline.clear() }, "stop")
+  .name("Remove animations");
+
+  //add animation speed to gui for every model
+  animations.add(
+    { speed: 1 },
+    "speed",
+    0.1,
+    2,
+    0.01
+  ).onChange((value) => {
+    gsap.globalTimeline.timeScale(value);
+  }).name("Animation speed");
+
+
+//hide models folder, ability to hide one model 
+const hideModels = gui.addFolder("Hide models");
+//hide mannetje model and name it hide merge
+hideModels.add(debugParams, "hideModels").onChange((value) => {
+  mannetje2.scene.visible = !value;
+}).name("Hide marge");
+
+//hide mannetje2 model
+hideModels.add(debugParams, "hideModels").onChange((value) => {
+  mannetje2.scene.visible = !value;
+}).name("Hide child");
 // Sizes
 const sizes = {
   width: 800,
