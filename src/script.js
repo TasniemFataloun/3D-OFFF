@@ -98,7 +98,7 @@ scene.add(directionalLightHelper2);
 directionalLightHelper2.visible = false;
 
 
-//light 3 
+//light 3
 const directionalLight3 = new THREE.DirectionalLight(0xff9000, 2);
 directionalLight3.position.set(1, 4, 3);
 scene.add(directionalLight3);
@@ -133,8 +133,8 @@ directionalLight.shadow.camera.right = 10;
 directionalLight.shadow.camera.top = 10;
 directionalLight.shadow.camera.bottom = -10;
 directionalLight.shadow.camera.near = 0.5;
-directionalLight.shadow.camera.far = 30;directionalLight.shadow.radius = 2;
-
+directionalLight.shadow.camera.far = 30;
+directionalLight.shadow.radius = 2;
 
 /*  GUI */
 const gui = new GUI({
@@ -164,7 +164,7 @@ const debugParams = {
   hideModels: false,
 };
 
-//model position 
+//model position
 const modelPosition = gui.addFolder("Model position");
 modelPosition.add(debugParams, "xPosition", -10, 10).onChange((value) => {
   marge.scene.position.x = value;
@@ -263,32 +263,19 @@ animations
   })
   .name("Animation speed");
 
-//hide models 
-const hideModels = gui.addFolder("Hide models");
+//hide models
+gui.add(debugParams, "hideModels").onChange((value) => {
+  marge.scene.visible = !value;
+  modelChild.scene.visible = !value;
+});
 
-hideModels
-  .add(debugParams, "hideModels")
-  .onChange((value) => {
-    modelChild.scene.visible = !value;
-  })
-  .name("Hide marge");
-
-
-hideModels
-  .add(debugParams, "hideModels")
-  .onChange((value) => {
-    marge.scene.visible = !value;
-  })
-  .name("Hide child");
-
-
-/*Sizes*/ 
+/*Sizes*/
 const sizes = {
   width: 800,
   height: 800,
 };
 
-/* Camera */ 
+/* Camera */
 const camera = new THREE.PerspectiveCamera(
   20,
   sizes.width / sizes.height,
